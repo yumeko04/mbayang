@@ -5,33 +5,88 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Chat en temps réel</title>
     <script src="/socket.io/socket.io.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #a748c7;
+            text-align: center;
+            margin: 0;
+            padding: 20px;
+        }
+        ul {
+            list-style-type: none;
+            padding: 0;
+            width: 100%;
+            max-width: 400px;
+            margin: auto;
+        }
+        li {
+            background: white;
+            margin: 5px 0;
+            padding: 10px;
+            border-radius: 5px;
+            display: block;
+            max-width: 70%;
+            text-align: left;
+            word-wrap: break-word;
+            width: fit-content;
+            clear: both;
+        }
+        form {
+            margin-top: 20px;
+        }
+        input {
+            padding: 10px;
+            width: 200px;
+        }
+        button {
+            padding: 10px;
+            background-color: blue;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+    </style>
 </head>
 <body>
+    <h1>Chat en temps réel</h1>
+    <input id="pseudo" placeholder="Entrez votre nom" />
     <ul id="messages"></ul>
-    <form id="form" action="">
-        <input id="input" autocomplete="off" /><button>Envoyer</button>
+    <form id="form">
+        <input id="input" autocomplete="off" placeholder="Tapez un message..." />
+        <button>Envoyer</button>
     </form>
 
     <script>
-        const socket = io('http://localhost:3000');
+        const socket = io('http://localhost:3000'); // Ajoute l'URL complète
         const form = document.getElementById('form');
         const input = document.getElementById('input');
         const messages = document.getElementById('messages');
+        const pseudoInput = document.getElementById('pseudo');
 
         form.addEventListener('submit', (e) => {
             e.preventDefault();
             if (input.value) {
-                socket.emit('chat message', input.value);
+                const pseudo = pseudoInput.value || 'Anonyme';
+                const message = `${pseudo}: ${input.value}`;
+                console.log('Envoi du message :', message); // Ajouter ce log
+                socket.emit('chat message', message);
                 input.value = '';
             }
         });
 
         socket.on('chat message', (msg) => {
+            console.log('Message reçu :', msg); // Ajouter ce log
             const li = document.createElement('li');
             li.textContent = msg;
             messages.appendChild(li);
         });
+
+        socket.on('connect_error', (err) => {
+            console.error('Erreur de connexion Socket.io :', err.message);
+        });
     </script>
 </body>
 </html>
+
 
