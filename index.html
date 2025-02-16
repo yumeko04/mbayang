@@ -4,31 +4,22 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Chat en temps réel</title>
-    <script src="/socket.io/socket.io.js"></script>
+    <script src="/socket.io/socket.io.js"></script> <!-- Importation de Socket.io -->
+    <link rel="stylesheet" href="style.css"> <!-- Optionnel : pour le CSS -->
 </head>
 <body>
-    <h1>Chat</h1>
-    <ul id="messages"></ul>
-    <input id="messageInput" autocomplete="off">
-    <button onclick="sendMessage()">Envoyer</button>
+    <h1>Chat en temps réel</h1>
 
-    <script>
-        const socket = io();
+    <ul id="messages"></ul> <!-- Liste des messages -->
 
-        socket.on('chat message', (data) => {
-            const li = document.createElement('li');
-            li.textContent = data;
-            document.getElementById('messages').appendChild(li);
-        });
+    <input id="messageInput" type="text" placeholder="Écris un message..." autocomplete="off">
+    <button id="sendButton">Envoyer</button>
 
-        function sendMessage() {
-            const input = document.getElementById('messageInput');
-            socket.emit('chat message', input.value);
-            input.value = '';
-        }
-    </script>
+    <!-- Lien vers le script JavaScript -->
+    <script src="script.js"></script>
 </body>
 </html>
+
 
 
 
