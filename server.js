@@ -1,38 +1,37 @@
-// Connexion au serveur Socket.io
-const socket = io();
+const express = require('express');
+const app = express();
+const http = require('http');
+const server = http.createServer(app);
+const { Server } = require("socket.io");
+const io = new Server(server);
 
-// Sélection des éléments HTML
-const messageInput = document.getElementById('messageInput');
-const messagesList = document.getElementById('messages');
-const sendButton = document.getElementById('sendButton');
+// Servir les fichiers statiques (HTML, CSS, etc.)
+app.use(express.static(__dirname));
 
-// Envoyer un message au serveur
-sendButton.addEventListener('click', () => {
-    sendMessage();
+// Gérer les connexions des clients
+io.on('connection', (socket) => {
+    console.log('Un utilisateur est connecté');
+
+    socket.on('chat message', (data) => {
+        io.emit('chat message', data);
+    });
+
+    socket.on('disconnect', () => {
+        console.log('Un utilisateur est déconnecté');
+    });
 });
 
-// Permettre d'envoyer avec la touche "Entrée"
-messageInput.addEventListener('keypress', (event) => {
-    if (event.key === 'Enter') {
-        sendMessage();
-    }
+// Démarrer le serveur
+server.listen(3000, () => {
+    console.log('Serveur démarré sur http://localhost:3000');
 });
-
-// Fonction pour envoyer un message
-function sendMessage() {
-    const message = messageInput.value.trim();
-    if (message !== '') {
-        socket.emit('chat message', message); // Envoi du message au serveur
-        messageInput.value = ''; // Effacer le champ après l'envoi
-    }
-}
-
-// Recevoir un message du serveur et l'afficher
-socket.on('chat message', (message) => {
-    const li = document.createElement('li');
-    li.textContent = message;
-    messagesList.appendChild(li);
+// Gérer proprement l'arrêt du serveur 
+process.on('SIGINT', () => {
+    console.log('\nFermeture du serveur...');
+    server.close(() => {
+        console.log('Serveur fermé proprement.');
+        process.exit(0);
+    });
 });
-
 
 
