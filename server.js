@@ -13,7 +13,7 @@ io.on('connection', (socket) => {
     console.log('Un utilisateur est connecté');
 
     socket.on('chat message', (data) => {
-        console.log('Message reçu : ', data);
+        console.log('Message reçu :', data); // Ajouter ce log
         io.emit('chat message', data);
     });
 
@@ -36,3 +36,4 @@ process.on('SIGINT', () => {
         process.exit(0);
     });
 });
+
